@@ -2,10 +2,10 @@ import { Revue } from '@/reactive';
 
 const rm = new Revue({
   el: 'app',
-  state: { a: 1, checked: true },
+  state: { a: 1, checked: false },
   watchers: {
     a(current: any, prev: any) {
-      console.log(`switch a from '${prev} to ${current}`);
+      console.log(`switch a from ${prev} to ${current}`);
     },
     b(current: any) {
       console.log(`add b equals ${current}`);
@@ -20,8 +20,8 @@ const rm = new Revue({
       {
         tag: 'input',
         attributes: {
-          type: 'checkbox',
-          checked: true
+          type: 'text',
+          value: '{{ a }}'
         }
       }
     ]

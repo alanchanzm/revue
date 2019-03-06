@@ -1,8 +1,8 @@
 import { createDOM } from './compiler';
 
-class Revue {
+class Revue implements IRevue {
   private _root: HTMLElement;
-  public state: any;
+  public state: { [key: string]: any };
   public watchers: { [key: string]: Function };
   constructor(options: IRevueOptions) {
     const { el, state, watchers, component } = options;
@@ -14,7 +14,7 @@ class Revue {
 
   _init(el: string, component: IComponent) {
     this._root = document.getElementById(el);
-    const child = createDOM(component);
+    const child = createDOM(this, component);
     this._root.appendChild(child);
   }
 

@@ -1,3 +1,8 @@
+interface IRevue {
+  state: { [key: string]: any };
+  watchers: { [key: string]: Function };
+}
+
 interface IRevueOptions {
   el: string;
   state?: any;

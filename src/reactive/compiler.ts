@@ -3,19 +3,20 @@ import { isPureObject, isArray } from '@/util';
 /**
  * create component
  */
-function createDOM(component: IComponent): HTMLElement {
+function createDOM(rm: IRevue, component: IComponent): HTMLElement {
   const { tag, id, attributes = {}, classList = [], children } = component;
-  const element = createElement(tag);
-  setAttribute(element, id, attributes);
-  setClass(element, classList);
-  setChildren(element, children);
+  const element = createElement(rm, tag);
+  setAttribute(rm, element, id, attributes);
+  setClass(rm, element, classList);
+  setChildren(rm, element, children);
   return element;
 }
 
 /**
  * create html element
  */
-function createElement(tag: string): HTMLElement {
+function createElement(rm: IRevue, tag: string): HTMLElement {
+  tag = getState(rm, tag);
   return document.createElement(tag);
 }
 
@@ -23,11 +24,14 @@ function createElement(tag: string): HTMLElement {
  * attach attributes to the element
  */
 function setAttribute(
+  rm: IRevue,
   element: HTMLElement,
   id: string,
   attributes: { [key: string]: string | number | boolean }
 ) {
+  id = getState(rm, id);
   Object.entries({ id, ...attributes }).forEach(([key, value]) => {
+    value = getState(rm, value);
     element.setAttribute(key, value);
   });
 }
@@ -35,8 +39,11 @@ function setAttribute(
 /**
  * attach classes to the element
  */
-function setClass(element: HTMLElement, classList: Array<string>) {
-  classList.forEach(className => element.classList.add(className));
+function setClass(rm: IRevue, element: HTMLElement, classList: Array<string>) {
+  classList.forEach(className => {
+    className = getState(rm, className);
+    element.classList.add(className);
+  });
 }
 
 /**
@@ -44,18 +51,32 @@ function setClass(element: HTMLElement, classList: Array<string>) {
  * which includes textNode and ohther tags
  */
 function setChildren(
+  rm: IRevue,
   element: HTMLElement,
   children: string | number | IComponent | Array<IComponent>
 ) {
   if (isPureObject(children)) {
-    element.appendChild(createDOM(children as IComponent));
+    element.appendChild(createDOM(rm, children as IComponent));
   } else if (isArray(children)) {
     (children as Array<IComponent>).forEach(component =>
-      element.appendChild(createDOM(component))
+      element.appendChild(createDOM(rm, component))
     );
   } else {
+    children = getState(rm, String(children));
     element.appendChild(document.createTextNode(String(children)));
   }
+}
+
+/**
+ * check if value is a pure string or a state property
+ */
+function getState(rm: IRevue, value: string): any {
+  const stateRE = /{{(.*)}}/;
+  if (stateRE.test(value)) {
+    const [, key] = stateRE.exec(value);
+    value = rm.state[key.trim()];
+  }
+  return value;
 }
 
 export { createDOM };
