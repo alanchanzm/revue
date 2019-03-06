@@ -1,6 +1,7 @@
 interface IRevue {
   state: { [key: string]: any };
   watchers: { [key: string]: Function };
+  reference: Set<string>;
 }
 
 interface IRevueOptions {

@@ -4,11 +4,8 @@ const rm = new Revue({
   el: 'app',
   state: { a: 1, checked: false },
   watchers: {
-    a(current: any, prev: any) {
-      console.log(`switch a from ${prev} to ${current}`);
-    },
-    b(current: any) {
-      console.log(`add b equals ${current}`);
+    a(curent: any, prev: any) {
+      console.log(`change a from ${prev} to ${curent}`);
     }
   },
   component: {

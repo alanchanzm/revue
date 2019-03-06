@@ -4,9 +4,9 @@ import { isPureObject, isArray } from '@/util';
  * create component
  */
 function createDOM(rm: IRevue, component: IComponent): HTMLElement {
-  const { tag, id, attributes = {}, classList = [], children } = component;
+  const { tag, attributes = {}, classList = [], children } = component;
   const element = createElement(rm, tag);
-  setAttribute(rm, element, id, attributes);
+  setAttribute(rm, element, attributes);
   setClass(rm, element, classList);
   setChildren(rm, element, children);
   return element;
@@ -26,13 +26,11 @@ function createElement(rm: IRevue, tag: string): HTMLElement {
 function setAttribute(
   rm: IRevue,
   element: HTMLElement,
-  id: string,
   attributes: { [key: string]: string | number | boolean }
 ) {
-  id = getState(rm, id);
-  Object.entries({ id, ...attributes }).forEach(([key, value]) => {
-    value = getState(rm, value);
-    element.setAttribute(key, value);
+  Object.entries(attributes).forEach(([key, value]) => {
+    value = getState(rm, String(value));
+    element.setAttribute(key, String(value));
   });
 }
 
@@ -74,9 +72,14 @@ function getState(rm: IRevue, value: string): any {
   const stateRE = /{{(.*)}}/;
   if (stateRE.test(value)) {
     const [, key] = stateRE.exec(value);
+    addToReference(rm, key.trim());
     value = rm.state[key.trim()];
   }
   return value;
+}
+
+function addToReference(rm: IRevue, key: string) {
+  rm.reference.add(key);
 }
 
 export { createDOM };
