@@ -23,7 +23,8 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: 'REVUE'
+      title: 'REVUE',
+      template: './index.html'
     })
   ],
   optimization: {

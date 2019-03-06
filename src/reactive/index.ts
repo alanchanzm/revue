@@ -1,10 +1,21 @@
+import { createDOM } from './compiler';
+
 class Revue {
+  private _root: HTMLElement;
   public state: any;
   public watchers: { [key: string]: Function };
   constructor(options: IRevueOptions) {
-    const { state, watchers } = options;
+    const { el, state, watchers, component } = options;
     this.state = state;
     this.watchers = watchers;
+
+    this._init(el, component);
+  }
+
+  _init(el: string, component: IComponent) {
+    this._root = document.getElementById(el);
+    const child = createDOM(component);
+    this._root.appendChild(child);
   }
 
   setState(data: any) {
