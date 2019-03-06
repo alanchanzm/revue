@@ -20,9 +20,21 @@ const rm = new Revue({
           type: 'text',
           value: '{{ a }}'
         }
+      },
+      {
+        tag: 'button',
+        children: 'click',
+        events: {
+          click: handleClick
+        }
       }
     ]
   }
 });
+
+function handleClick(event: Event) {
+  const { currentTarget } = event;
+  console.log(currentTarget);
+}
 
 rm.setState({ a: 5, b: 3 });

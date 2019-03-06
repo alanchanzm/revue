@@ -4,11 +4,18 @@ import { isPureObject, isArray } from '@/util';
  * create component
  */
 function createDOM(rm: IRevue, component: IComponent): HTMLElement {
-  const { tag, attributes = {}, classList = [], children } = component;
+  const {
+    tag,
+    attributes = {},
+    classList = [],
+    children,
+    events = {}
+  } = component;
   const element = createElement(rm, tag);
   setAttribute(rm, element, attributes);
   setClass(rm, element, classList);
   setChildren(rm, element, children);
+  setEvent(element, events);
   return element;
 }
 
@@ -60,9 +67,18 @@ function setChildren(
       element.appendChild(createDOM(rm, component))
     );
   } else {
-    children = getState(rm, String(children));
+    children = children ? getState(rm, String(children)) : '';
     element.appendChild(document.createTextNode(String(children)));
   }
+}
+
+/**
+ * add event listeners to the element
+ */
+function setEvent(element: HTMLElement, events: { [key: string]: any }) {
+  Object.entries(events).forEach(([type, fn]) => {
+    element.addEventListener(type, fn);
+  });
 }
 
 /**

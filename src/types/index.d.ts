@@ -18,4 +18,5 @@ interface IComponent {
   classList?: Array<string>;
   attributes?: { [key: string]: string | number | boolean };
   children?: string | number | IComponent | Array<IComponent>;
+  events?: { [key: string]: Function };
 }
