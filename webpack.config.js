@@ -9,7 +9,11 @@ module.exports = {
     filename: 'revue.js'
   },
   mode: 'development',
+  devtool: 'source-map',
   resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'src')
+    },
     extensions: ['.ts', '.js', '.json']
   },
   module: {
