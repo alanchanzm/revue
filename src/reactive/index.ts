@@ -2,26 +2,19 @@ import { createDOM } from './compiler';
 
 class Revue implements IRevue {
   private _root: HTMLElement;
-  private _component: IComponent;
+
   public state: { [key: string]: any };
   public watchers: { [key: string]: Function };
   public reference: Set<string>;
-  constructor(options: IRevueOptions) {
-    const { el, state, watchers, component } = options;
+  public component: IComponent;
+  public fragment: HTMLElement;
 
-    this._root = document.getElementById(el);
-    this._component = component;
+  constructor(options: IRevueOptions) {
+    const { state, watchers } = options;
 
     this.state = state;
     this.watchers = watchers;
     this.reference = new Set();
-
-    this._init(component);
-  }
-
-  _init(component: IComponent) {
-    const child = createDOM(this, component);
-    this._root.appendChild(child);
   }
 
   setState(data: any) {
@@ -34,13 +27,19 @@ class Revue implements IRevue {
         this.state[key] = value;
         // run watchers
         typeof fn === 'function' && fn(value, prev);
-        // refresh the page
-        if (this.reference.has(key)) {
-          this._root.childNodes.forEach(child => child.remove());
-          this._init(this._component);
-        }
+        // TODO: refresh the page
       }
     });
+  }
+
+  attachComponent(component: IComponent, el?: string) {
+    this.component = component;
+
+    if (el) {
+      this._root = document.getElementById(el);
+      this.fragment = createDOM(this, component);
+      this._root.appendChild(this.fragment);
+    }
   }
 }
 

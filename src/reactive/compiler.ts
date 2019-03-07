@@ -60,22 +60,29 @@ function setChildren(
   element: HTMLElement,
   children: string | number | IComponent | Array<IComponent>
 ) {
-  if (isPureObject(children)) {
-    element.appendChild(createDOM(rm, children as IComponent));
-  } else if (isArray(children)) {
-    (children as Array<IComponent>).forEach(component =>
-      element.appendChild(createDOM(rm, component))
-    );
-  } else {
-    children = children ? getState(rm, String(children)) : '';
-    element.appendChild(document.createTextNode(String(children)));
+  switch (true) {
+    case isPureObject(children):
+      element.appendChild(createDOM(rm, children as IComponent));
+      break;
+    case isArray(children):
+      (children as Array<IComponent>).forEach(component =>
+        element.appendChild(createDOM(rm, component))
+      );
+      break;
+    default:
+      children = children ? getState(rm, String(children)) : '';
+      element.appendChild(document.createTextNode(String(children)));
+      break;
   }
 }
 
 /**
  * add event listeners to the element
  */
-function setEvent(element: HTMLElement, events: { [key: string]: any }) {
+function setEvent(
+  element: HTMLElement,
+  events: { [key: string]: EventListener }
+) {
   Object.entries(events).forEach(([type, fn]) => {
     element.addEventListener(type, fn);
   });

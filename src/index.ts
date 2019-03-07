@@ -1,14 +1,17 @@
 import { Revue } from '@/reactive';
+import { Checkbox } from './checkbox';
 
-const rm = new Revue({
-  el: 'app',
+const App = new Revue({
   state: { a: 1, checked: false },
   watchers: {
     a(curent: any, prev: any) {
       console.log(`change a from ${prev} to ${curent}`);
     }
-  },
-  component: {
+  }
+});
+
+App.attachComponent(
+  {
     tag: 'div',
     id: 'test',
     classList: ['wrapper'],
@@ -18,7 +21,7 @@ const rm = new Revue({
         tag: 'input',
         attributes: {
           type: 'text',
-          value: '{{ a }}'
+          value: App.state.a
         }
       },
       {
@@ -27,14 +30,16 @@ const rm = new Revue({
         events: {
           click: handleClick
         }
-      }
+      },
+      Checkbox.component
     ]
-  }
-});
+  },
+  'app'
+);
 
 function handleClick(event: Event) {
   const { currentTarget } = event;
   console.log(currentTarget);
 }
 
-rm.setState({ a: 5, b: 3 });
+App.setState({ a: 5, b: 3 });
